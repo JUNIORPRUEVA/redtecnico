@@ -1,0 +1,81 @@
+name: fulltech_technicians_flutter
+description: "Red Técnico Fulltech - Red privada de técnicos y ayudantes aliados de FULLTECH SRL."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Estado e inyección de dependencias
+  flutter_riverpod: ^2.6.1
+
+
+  # Navegación
+  go_router: ^14.6.2
+
+  # Modelos inmutables y serialización
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+
+  # Supabase
+  supabase_flutter: ^2.8.3
+
+  # Almacenamiento seguro y preferencias
+  flutter_secure_storage: ^9.2.2
+  shared_preferences: ^2.3.3
+
+  # Caché local y borradores offline
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+
+  # Selección de imágenes y archivos
+  image_picker: ^1.1.2
+  file_picker: ^8.1.4
+
+  # Ubicación
+  geolocator: ^13.0.2
+
+  # Apertura de enlaces
+  url_launcher: ^6.3.1
+
+  # Conectividad
+  connectivity_plus: ^6.1.0
+
+  # Notificaciones locales
+  flutter_local_notifications: ^18.0.1
+
+  # Formato de fechas y moneda
+  intl: ^0.19.0
+
+  # Logs
+  logger: ^2.5.0
+
+  # Errores de producción
+  sentry_flutter: ^8.9.0
+
+  # Validación
+  formz: ^0.7.0
+
+  # Identificadores idempotentes
+  uuid: ^4.5.1
+
+  # Iconos
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.4.13
+  freezed: ^2.5.7
+  json_serializable: ^6.9.0
+  mocktail: ^1.0.4
+
+
+flutter:
+  uses-material-design: true
