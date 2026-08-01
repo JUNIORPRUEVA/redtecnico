@@ -55,11 +55,9 @@ dependencies:
   # Logs
   logger: ^2.5.0
 
-  # Errores de producción
-  sentry_flutter: ^8.9.0
-
   # Validación
   formz: ^0.7.0
+
 
   # Identificadores idempotentes
   uuid: ^4.5.1
