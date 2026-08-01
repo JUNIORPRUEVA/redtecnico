@@ -1,0 +1,33 @@
+{
+  "project": "redtecnico",
+  "services": {
+    "redtecnicobackend": {
+      "type": "app",
+      "source": "github",
+      "repository": "JUNIORPRUEVA/redtecnico",
+      "branch": "main",
+      "dockerfile": "Dockerfile",
+      "port": 3000,
+      "healthcheck": "/api/health"
+    },
+    "redtecnicopwa": {
+      "type": "app",
+      "source": "github",
+      "repository": "JUNIORPRUEVA/redtecnico",
+      "branch": "main",
+      "dockerfile": "Dockerfile",
+      "port": 3000,
+      "healthcheck": "/api/health"
+    }
+  },
+  "environment": [
+    "NODE_ENV=production",
+    "PORT=3000",
+    "HOSTNAME=0.0.0.0",
+    "DATABASE_URL=REEMPLAZAR-DATABASE-URL",
+    "NEXT_PUBLIC_APP_URL=https://REEMPLAZAR-DOMINIO",
+    "NEXT_PUBLIC_SUPABASE_URL=REEMPLAZAR-SUPABASE-URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY=REEMPLAZAR-SUPABASE-ANON-KEY",
+    "SUPABASE_SERVICE_ROLE_KEY=REEMPLAZAR-SUPABASE-SERVICE-ROLE-KEY"
+  ]
+}
