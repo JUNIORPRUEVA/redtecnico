@@ -3,9 +3,8 @@
  * No se cachean documentos sensibles de forma permanente.
  */
 
-const CACHE_NAME = "red-fulltech-v1";
+const CACHE_NAME = "red-fulltech-v2";
 const STATIC_ASSETS = [
-  "/",
   "/manifest.webmanifest",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
@@ -44,19 +43,18 @@ self.addEventListener("fetch", (event) => {
   // No cachear llamadas a Supabase (datos sensibles)
   if (url.hostname.includes("supabase.co")) return;
 
-  // Navegación: network-first con fallback a offline
+  // Navegación: siempre red primero, sin guardar HTML de la app.
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
-        .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-          return response;
-        })
         .catch(() =>
-          caches.match(request).then((cached) => cached || caches.match("/offline"))
+          caches.match("/offline")
         )
     );
+    return;
+  }
+
+  if (url.pathname.startsWith("/_next/")) {
     return;
   }
 

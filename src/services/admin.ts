@@ -1,4 +1,7 @@
-import { createClient as createSupabaseClient } from "@/lib/supabase/client";
+import { createClient as createSupabaseClient, isSupabaseConfigured } from "@/lib/supabase/client";
+import { apiGet } from "@/lib/postgres-api";
+
+type AdminRow = Record<string, unknown>;
 
 /**
  * Servicio de administración.
@@ -20,6 +23,8 @@ export async function getAllWorkers() {
 }
 
 export async function getPendingWorkers() {
+  if (!isSupabaseConfigured()) return apiGet<AdminRow[]>("/api/admin/pending-workers");
+
   const supabase = createSupabaseClient();
   const { data, error } = await supabase
     .from("worker_profiles")
@@ -63,6 +68,12 @@ export async function reviewWorker(
 }
 
 export async function getAdminDashboardStats() {
+  if (!isSupabaseConfigured()) {
+    const { data, error } = await apiGet<Record<string, number>>("/api/admin/stats");
+    if (error) throw new Error(error.message);
+    return data;
+  }
+
   const supabase = createSupabaseClient();
   const today = new Date().toISOString().split("T")[0];
 
@@ -91,6 +102,8 @@ export async function getAdminDashboardStats() {
 }
 
 export async function getRecentServices() {
+  if (!isSupabaseConfigured()) return apiGet<AdminRow[]>("/api/admin/recent-services");
+
   const supabase = createSupabaseClient();
   const { data, error } = await supabase
     .from("services")

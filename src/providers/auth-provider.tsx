@@ -1,7 +1,8 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
+import { getLocalSession } from "@/services/auth";
 import type { Session, User } from "@supabase/supabase-js";
 
 
@@ -32,18 +33,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const loadRole = useCallback(async (userId: string) => {
+    if (!isSupabaseConfigured()) {
+      const session = getLocalSession();
+      const localRole = session?.user?.app_metadata?.role as UserRole | undefined;
+      setRole(localRole ?? null);
+      setIsLoading(false);
+      return;
+    }
+
     const supabase = createClient();
-    const { data } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userId)
-      .limit(1)
-      .single();
-    setRole((data?.role as UserRole) ?? null);
-    setIsLoading(false);
+    try {
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .limit(1)
+        .single();
+      setRole((data?.role as UserRole) ?? null);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   useEffect(() => {
+    if (!isSupabaseConfigured()) {
+      const syncLocalSession = () => {
+        const session = getLocalSession();
+        setSession(session);
+        setUser(session?.user ?? null);
+        setRole((session?.user?.app_metadata?.role as UserRole | undefined) ?? null);
+        setIsLoading(false);
+      };
+
+      syncLocalSession();
+      window.addEventListener("storage", syncLocalSession);
+      window.addEventListener("redtecnico-auth-change", syncLocalSession);
+
+      return () => {
+        window.removeEventListener("storage", syncLocalSession);
+        window.removeEventListener("redtecnico-auth-change", syncLocalSession);
+      };
+    }
+
     const supabase = createClient();
 
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -54,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setIsLoading(false);
       }
-    });
+    }).catch(() => setIsLoading(false));
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);

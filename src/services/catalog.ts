@@ -1,10 +1,15 @@
-import { createClient } from "@/lib/supabase/client";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
+import { apiGet } from "@/lib/postgres-api";
+
+type CatalogRow = Record<string, unknown>;
 
 /**
  * Servicio de catálogos (provincias, municipios, sectores, especialidades).
  */
 
 export async function getProvinces() {
+  if (!isSupabaseConfigured()) return apiGet<CatalogRow[]>("/api/catalog?resource=provinces");
+
   const supabase = createClient();
   const { data, error } = await supabase
     .from("provinces")
@@ -14,6 +19,11 @@ export async function getProvinces() {
 }
 
 export async function getMunicipalities(provinceId?: string) {
+  if (!isSupabaseConfigured()) {
+    const query = provinceId ? `&provinceId=${encodeURIComponent(provinceId)}` : "";
+    return apiGet<CatalogRow[]>(`/api/catalog?resource=municipalities${query}`);
+  }
+
   const supabase = createClient();
   let query = supabase.from("municipalities").select("*").order("name", { ascending: true });
   if (provinceId) {
@@ -24,6 +34,11 @@ export async function getMunicipalities(provinceId?: string) {
 }
 
 export async function getSectors(municipalityId?: string) {
+  if (!isSupabaseConfigured()) {
+    const query = municipalityId ? `&municipalityId=${encodeURIComponent(municipalityId)}` : "";
+    return apiGet<CatalogRow[]>(`/api/catalog?resource=sectors${query}`);
+  }
+
   const supabase = createClient();
   let query = supabase.from("sectors").select("*").order("name", { ascending: true });
   if (municipalityId) {
@@ -34,6 +49,8 @@ export async function getSectors(municipalityId?: string) {
 }
 
 export async function getSpecialties() {
+  if (!isSupabaseConfigured()) return apiGet<CatalogRow[]>("/api/catalog?resource=specialties");
+
   const supabase = createClient();
   const { data, error } = await supabase
     .from("specialties")
@@ -44,6 +61,8 @@ export async function getSpecialties() {
 }
 
 export async function getAllSpecialties() {
+  if (!isSupabaseConfigured()) return apiGet<CatalogRow[]>("/api/catalog?resource=specialties");
+
   const supabase = createClient();
   const { data, error } = await supabase
     .from("specialties")
@@ -74,6 +93,8 @@ export async function updateSpecialty(specialtyId: string, updates: Record<strin
 }
 
 export async function getWorkerDocumentTypes() {
+  if (!isSupabaseConfigured()) return apiGet<CatalogRow[]>("/api/catalog?resource=documentTypes");
+
   const supabase = createClient();
   const { data, error } = await supabase
     .from("worker_document_types")
